@@ -1,0 +1,5 @@
+.idea/
+bin/
+
+.env*
+/api/api.gen.go
