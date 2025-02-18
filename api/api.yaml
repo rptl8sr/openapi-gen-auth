@@ -1,0 +1,120 @@
+openapi: 3.0.0
+info:
+  title: Open API Auth
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /health:
+    get:
+      security: [ ]
+      responses:
+        '200':
+          description: Status OK
+
+  /api/public:
+    get:
+      security: [ ]
+      responses:
+        '200':
+          description: Status OK
+
+  /api/private:
+    get:
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: Status OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateResponse'
+        '401':
+          description: Unauthorized Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth:
+    post:
+      security: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: Status OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: username
+        password:
+          type: string
+          format: password
+          description: password
+      required:
+        - username
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT for auth
+
+    PrivateResponse:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username
+
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: string
+          description: Error's info

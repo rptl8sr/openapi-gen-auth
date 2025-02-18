@@ -1,0 +1,62 @@
+###
+# 1. Check the `/health` route
+GET http://localhost:8080/health
+
+> {%
+    client.assert(response.status === 200, "Health route failed! Expected status 200, got " + response.status);
+%}
+
+###
+# 2. Authenticate to get a JWT token
+POST http://localhost:8080/api/auth
+Content-Type: application/json
+
+{
+  "username": "testUserName",
+  "password": "pass"
+}
+
+> {%
+    client.assert(response.status === 200, "Auth route failed! Expected status 200, got " + response.status);
+    var jsonResponse;
+
+    if (typeof response.body === 'string') {
+        try {
+            jsonResponse = JSON.parse(response.body);
+        } catch (e) {
+            throw new Error("Failed to parse response body as JSON: " + response.body);
+        }
+    } else {
+        jsonResponse = response.body;
+    }
+
+    client.assert(jsonResponse.token, "Token not found in response: " + JSON.stringify(jsonResponse));
+    client.global.set("TOKEN_VAR", jsonResponse.token);
+    client.log("Token successfully saved:", jsonResponse.token);
+%}
+
+
+
+###
+# 3. Use the JWT token for private route
+GET http://localhost:8080/api/private
+Authorization: Bearer {{TOKEN_VAR}}
+
+> {%
+    client.assert(response.status === 200, "Private route failed! Expected status 200, got " + response.status);
+
+    var jsonResponse;
+
+    if (typeof response.body === 'string') {
+        try {
+            jsonResponse = JSON.parse(response.body); // Парсим строку JSON
+        } catch (e) {
+            throw new Error("Failed to parse response body as JSON: " + response.body);
+        }
+    } else {
+        jsonResponse = response.body;
+    }
+
+    client.assert(jsonResponse.username === "testUserName",
+        "Expected username to match 'testUserName', got " + jsonResponse.username);
+%}
