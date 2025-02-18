@@ -43,7 +43,7 @@ func (s *Implementation) PostApiAuth(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, api.AuthResponse{Token: &token})
 }
 
-func (s *Implementation) GetHealth(w http.ResponseWriter, r *http.Request) {
+func (s *Implementation) GetHealth(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -68,6 +68,6 @@ func (s *Implementation) GetApiPrivate(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, api.PrivateResponse{Username: &userID})
 }
 
-func (s *Implementation) GetApiPublic(w http.ResponseWriter, r *http.Request) {
+func (s *Implementation) GetApiPublic(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
