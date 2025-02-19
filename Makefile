@@ -20,7 +20,7 @@ health:
 	}
 
 
-#USER := testUserName
+USER := testUserName
 auth:
 	@echo "Get /api/auth authorization..."
 	@{ \
